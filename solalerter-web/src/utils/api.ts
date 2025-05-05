@@ -4,11 +4,11 @@ const env = import.meta.env.VITE_NODE_ENV;
 if(env === 'development') {
   API_BASE_URL = import.meta.env.VITE_API_HOST;
 } 
-export const apiGet = async (endpoint: string) => {
+export const apiGet = async (endpoint: string, tokenNotReqd: boolean = false) => {
     console.log('API GET Request:', `${API_BASE_URL}/${endpoint}`);
     const token = localStorage.getItem('authToken');
     try {
-      if (!token) {
+      if (!token && !tokenNotReqd) {
         throw new Error('Authentication token is missing');
       }
 
@@ -32,11 +32,11 @@ export const apiGet = async (endpoint: string) => {
     }
 };
 
-export const apiPost = async (endpoint: string, data: any, isLogin = false) => {
+export const apiPost = async (endpoint: string, data: any, tokenNotReqd = false) => {
     // console.log('API POST Request:', `${API_BASE_URL}/${endpoint}`);
     const token = localStorage.getItem('authToken');
     try {
-      if (!token && !isLogin) {
+      if (!token && !tokenNotReqd) {
         throw new Error('Authentication token is missing');
       }
 

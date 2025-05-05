@@ -32,12 +32,14 @@ app.get("/status", async (req, res) => {
 // Import routes
 import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
+import coinGeckoRoutes from './routes/coinGecko.routes';
 import { authenticateJWT } from "./middleware/gmailAuth.middleware";
 
 // Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', authenticateJWT, userRoutes);
 app.use('/api/subscription', authenticateJWT, subscriptionRoutes);   
+app.use('/api/coingecko', coinGeckoRoutes);
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'clientApp', 'index.html'));
 });

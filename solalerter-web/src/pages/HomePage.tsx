@@ -7,7 +7,7 @@ import {
   LineChart,
   Search,
   Settings,
-  Webhook,
+  Siren,
   Rocket,
   Megaphone,
   Twitter,
@@ -22,21 +22,11 @@ import {
   ThumbsUp,
   Smartphone,
   Send,
-  Bell as BellIcon,
+  Webhook,
+  TrendingDown,
 } from 'lucide-react';
 import Login from './Login';
-
-// Sample data for trending coins
-const trendingCoins = [
-  { name: 'SOL', price: '$172.43', change: '+5.2%', volume: '$1.2B', positive: true },
-  { name: 'BONK', price: '$0.00001234', change: '+12.8%', volume: '$431M', positive: true },
-  { name: 'JTO', price: '$3.87', change: '-2.1%', volume: '$89M', positive: false },
-  { name: 'PYTH', price: '$0.67', change: '+3.6%', volume: '$152M', positive: true },
-  { name: 'RNDR', price: '$7.21', change: '-1.4%', volume: '$214M', positive: false },
-  { name: 'SAMO', price: '$0.0342', change: '+8.7%', volume: '$89M', positive: true },
-  { name: 'ORAO', price: '$1.23', change: '-0.7%', volume: '$45M', positive: false },
-  { name: 'DUST', price: '$0.0013', change: '+15.4%', volume: '$76M', positive: true },
-];
+import { apiGet } from '../utils/api'; 
 
 // Sample data for recent events
 const recentEvents = [
@@ -70,13 +60,25 @@ export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showTopCoins, setShowTopCoins] = useState(true);
   const [showEvents, setShowEvents] = useState(true);
-  const [showICOs, setShowICOs] = useState(true);
+  // const [showICOs, setShowICOs] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
-  const [visibleCoins, setVisibleCoins] = useState(5);
   const [showNotificationPanel, setShowNotificationPanel] = useState(false);
   const [notificationCount, setNotificationCount] = useState(3);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [trendingCoins, setTrendingCoins] = useState([]);
+
+  useEffect(() => {
+    const fetchTrendingCoins = async () => {
+      const data = await apiGet('api/coingecko/get-trending-coins',true);
+      setTrendingCoins(data);
+    };
+
+    fetchTrendingCoins();
+    const interval = setInterval(fetchTrendingCoins, 600000); // 10 minutes
+
+    return () => clearInterval(interval);
+  }, []);
 
   const toggleLogin = () => {
     setIsLoginOpen(!isLoginOpen);
@@ -117,7 +119,7 @@ export default function HomePage() {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="flex items-center">
-                  <Webhook className="h-8 w-8 text-blue-600" />
+                  <Siren className="h-8 w-8 text-blue-600" />
                   <span className="ml-1 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-700 bg-clip-text text-transparent">SolAlerter</span>
                 </div>
               </div>
@@ -178,7 +180,7 @@ export default function HomePage() {
               <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition">
                 <Settings size={18} />
               </button>
-              <button onClick={toggleLogin} className="flex items-center gap-2 px-4 py-2 rounded-md border border-blue-600 bg-white hover:bg-gray-100 text-blue-600 font-medium transition">
+              <button onClick={toggleLogin} className="flex items-center gap-2 px-4 py-2 rounded-md border border-gray-300 hover:border-gray-400 font-medium transition">
                 Login
               </button>
               <button onClick={toggleLogin} className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium transition">
@@ -200,7 +202,6 @@ export default function HomePage() {
               <a href="#" className="font-medium hover:text-blue-600 transition">Subscriptions</a>
               <a href="#" className="font-medium hover:text-blue-600 transition">Alerts</a>
               <a href="#" className="font-medium hover:text-blue-600 transition">Analytics</a>
-              <a href="#" className="font-medium hover:text-blue-600 transition">API</a>
               <div className="pt-2 border-t border-gray-200 flex items-center justify-between">
                 <button className="p-2 rounded-full bg-gray-100 relative">
                   <Bell size={18} />
@@ -214,17 +215,25 @@ export default function HomePage() {
                   <Settings size={18} />
                 </button>
               </div>
-              <button className="flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium transition">
-                Sign Up
-              </button>
+              <div className='flex'>
+                <button onClick={toggleLogin} className="w-1/2 gap-2 px-4 py-2 rounded-md border border-gray-300 hover:border-gray-400 font-medium transition">
+                  Login
+                </button>
+                &nbsp;
+                <button onClick={toggleLogin} className="w-1/2 gap-2 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium transition">
+                  Sign Up
+                </button>
+              </div>
             </nav>
           </div>
         )}
       </header>
       {/* Login Modal */}
       {isLoginOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30">
-          <Login></Login>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30" onClick={() => setIsLoginOpen(false)}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <Login />
+          </div>
         </div>
       )}
       {/* Hero section */}
@@ -299,24 +308,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Stats section */}
-      <section className="bg-blue-50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {userStats.map((stat, index) => (
-              <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
-                <div className="flex justify-center mb-4">
-                  {stat.icon}
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
-                <p className="text-gray-600">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
+      <div className="border-t border-gray-200"></div>
+      
       {/* Feature Highlights */}
       <section className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -424,11 +417,11 @@ export default function HomePage() {
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Top Coins by Volume */}
-          <div className={`col-span-2 ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-lg overflow-hidden`}>
-            <div className="px-6 py-4 border-b flex justify-between items-center border-opacity-20">
+          <div className={`col-span-2 ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-lg overflow-hidden w-full`}>
+            <div className="px-4 sm:px-6 py-4 border-b flex justify-between items-center border-opacity-20">
               <div className="flex items-center gap-2">
                 <Coins className="text-purple-500" size={18} />
-                <h2 className="font-semibold">Top Coins by Volume/Popularity</h2>
+                <h2 className="font-semibold text-sm sm:text-base">Top Coins by Market Cap</h2>
               </div>
               <button 
                 onClick={() => setShowTopCoins(!showTopCoins)}
@@ -439,50 +432,112 @@ export default function HomePage() {
             </div>
             
             {showTopCoins && (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className={`${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Coin</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Price</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">24h Change</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Volume</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
-                    {trendingCoins.map((coin, index) => (
-                      <tr key={index} className={`hover:bg-opacity-10 hover:bg-gray-500 transition`}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-400 flex items-center justify-center mr-3">
-                              <span className="text-white text-xs font-bold">{coin.name.substring(0, 1)}</span>
-                            </div>
-                            <span className="font-medium">{coin.name}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">{coin.price}</td>
-                        <td className={`px-6 py-4 whitespace-nowrap ${coin.positive ? 'text-blue-500' : 'text-red-500'}`}>
-                          <div className="flex items-center">
-                            {coin.positive ? <TrendingUp size={16} className="mr-1" /> : <X size={16} className="mr-1" />}
-                            {coin.change}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">{coin.volume}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex space-x-2">
-                            <button className={`p-2 rounded-md ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'} transition`}>
-                              <LineChart size={14} />
-                            </button>
-                            <button className={`p-2 rounded-md ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'} transition`}>
-                              <Bell size={14} />
-                            </button>
-                          </div>
-                        </td>
+              <div>
+                {/* Desktop View - Table */}
+                <div className="hidden sm:block overflow-x-auto">
+                  <table className="min-w-full">
+                    <thead className={`${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Coin</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Price</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">24h Change</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Volume</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
+                      {trendingCoins.map((coin, index) => (
+                        <tr key={index} className={`hover:bg-opacity-10 hover:bg-gray-500 transition`}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="mr-2">
+                                <img src={coin.image} alt={coin.name} className="h-6 w-6" />
+                              </div>
+                              <span className="font-medium">{coin.name.length > 25 ? coin.name.substring(0, 25) + '...' : coin.name}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">${coin.current_price.toFixed(2)}</td>
+                          <td className={`px-6 py-4 whitespace-nowrap ${coin.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                            <div className="flex items-center">
+                              {coin.price_change_percentage_24h >= 0 ? <TrendingUp size={16} className="mr-1" /> : <TrendingDown size={16} className="mr-1" />}
+                              {coin.price_change_percentage_24h.toFixed(2)}%
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">${coin.market_cap.toLocaleString()}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex space-x-2">
+                              <button 
+                                onClick={() => window.open(`https://www.coingecko.com/en/coins/${coin.name.toLowerCase()}`, '_blank')} 
+                                className={`p-2 rounded-md ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'} transition`}
+                              >
+                                <LineChart size={14} />
+                              </button>
+                              <button onClick={toggleLogin} className={`p-2 rounded-md ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'} transition`}>
+                                <Bell size={14} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                
+                {/* Mobile View - Cards */}
+                <div className="sm:hidden">
+                  {trendingCoins.map((coin, index) => (
+                    <div 
+                      key={index} 
+                      className={`p-4 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'} last:border-b-0`}
+                    >
+                      {/* Coin header with name and actions */}
+                      <div className="flex justify-between items-center mb-3">
+                        <div className="flex items-center">
+                          <div className="mr-2">
+                            <img src={coin.image} alt={coin.name} className="h-5 w-5" />
+                          </div>
+                          <span className="font-medium text-sm">{coin.name.length > 25 ? coin.name.substring(0, 25) + '...' : coin.name}</span>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button 
+                            onClick={() => window.open(`https://www.coingecko.com/en/coins/${coin.name.toLowerCase()}`, '_blank')} 
+                            className={`p-1 rounded-md ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'} transition`}
+                          >
+                            <LineChart size={14} />
+                          </button>
+                          <button 
+                            onClick={toggleLogin} 
+                            className={`p-1 rounded-md ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'} transition`}
+                          >
+                            <Bell size={14} />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {/* Coin stats in mobile card format */}
+                      <div className="grid grid-cols-3 gap-2 text-sm">
+                        <div>
+                          <p className="text-xs uppercase text-gray-500 mb-1">Price</p>
+                          <p className="font-medium">${coin.current_price.toFixed(2)}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs uppercase text-gray-500 mb-1">24h Change</p>
+                          <p className={`font-medium flex items-center ${coin.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                            {coin.price_change_percentage_24h >= 0 ? 
+                              <TrendingUp size={14} className="mr-1" /> : 
+                              <TrendingDown size={14} className="mr-1" />
+                            }
+                            {coin.price_change_percentage_24h.toFixed(2)}%
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs uppercase text-gray-500 mb-1">Market Cap</p>
+                          <p className="font-medium">${coin.market_cap.toLocaleString()}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -580,7 +635,7 @@ export default function HomePage() {
                 <option>Whale Transaction</option>
                 <option>Token Burn</option>
               </select>
-              <button className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-400 text-white font-medium hover:opacity-90 transition">
+              <button onClick={toggleLogin} className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-400 text-white font-medium hover:opacity-90 transition">
                 Add Alert
               </button>
             </div>
@@ -594,7 +649,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
               <div>
-              <Webhook className="h-8 w-8 text-blue-600" />
+              <Siren className="h-8 w-8 text-blue-600" />
               </div>
               <span className="ml-1 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-700 bg-clip-text text-transparent">SolAlerter</span>
             </div>
