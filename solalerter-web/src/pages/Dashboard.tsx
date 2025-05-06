@@ -3,7 +3,8 @@ import { apiGet } from '../utils/api';
 
 const Dashboard: React.FC = () => {
   const [activeSubscriptions, setActiveSubscriptions] = useState(0);
-  const [dbStatus, setDbStatus] = useState<'Connected' | 'Not Connected'>('Not Connected');
+  const [userName, setUserName] = useState('');
+  const [telegramId, setTelegramId] = useState('');
   const [indexCount, setindexCount] = useState(0);
 
   // Fetch active subscriptions count
@@ -24,30 +25,27 @@ const Dashboard: React.FC = () => {
 
   // Check database connection status
   useEffect(() => {
-    const checkDatabaseConnection = async () => {
+    const getUserDetails = async () => {
       try {
-        const response = await apiGet('api/user/test-database');
+        const response = await apiGet('api/user/get-user');
         if (response.success) {
-          setDbStatus('Connected');
-        } else {
-          setDbStatus('Not Connected');
+          setUserName(response.user.name);
+          setTelegramId(response.user.telegramId);
         }
-        setindexCount(response.count);
       } catch (error) {
-        console.error('Error checking database connection:', error);
-        setDbStatus('Not Connected');
+        console.error('Error fetching user details:', error);
       }
     };
 
-    checkDatabaseConnection();
+    getUserDetails();
   }, []);
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Welcome to Sol Alerter</h1>
+      <h1 className="text-2xl font-bold mb-4">Welcome {userName} to Sol Alerter</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-white shadow rounded-lg p-6">
+        <div className="bg-white   rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Active Subscriptions</h2>
           <div className="text-3xl font-bold text-indigo-600">{activeSubscriptions}</div>
           <p className="text-gray-500 mt-2">Currently running indexers</p>
@@ -60,11 +58,10 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-semibold mb-4">Database Status</h2>
+          <h2 className="text-lg font-semibold mb-4">Telegram Settings</h2>
           <div className="text-sm text-gray-600">
-            <p>Configure your database in settings</p>
-            <p className={`font-semibold mt-2 ${dbStatus === 'Connected' ? 'text-green-600' : 'text-yellow-600'}`}>
-              {dbStatus}
+            <p className={`font-semibold mt-2 ${telegramId ? 'text-green-600' : 'text-red-600'}`}>
+              {telegramId ? telegramId : 'Please provide telegram id in profile'}
             </p>
           </div>
         </div>
