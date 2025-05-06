@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { googleAuthHandler, refreshToken, authenticateJWT } from '../middleware/gmailAuth.middleware';
+import { googleAuthHandler, refreshToken, authenticateJWT } from '../middleware/auth.middleware';
 
 const router = express.Router();
 

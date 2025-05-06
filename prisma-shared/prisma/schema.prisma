@@ -20,9 +20,9 @@ model User {
   password            String
   googleId            String?        @unique
   name                String?
-  postgresCredentials Json?
+  telegramId          String?        @unique
   subscription        Subscription[]
-  userPostgresDatabase UserPostgresDatabase[]
+  HeliusResponse     HeliusResponse[]
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
 }
@@ -52,16 +52,12 @@ model TokenPrice {
   createdAt      DateTime     @default(now())
 }
 
-model UserPostgresDatabase {
-  id                Int          @id @default(autoincrement())
-  userId            Int
-  user              User         @relation(fields: [userId], references: [id])
-  host              String
-  port              Int
-  databaseName      String
-  userName          String
-  password          String
-  createdAt         DateTime     @default(now())
+model HeliusResponse {
+  id          Int     @id @default(autoincrement())
+  response    String
+  userId      Int
+  user        User    @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
 }
 
 enum SubscriptionStatus {

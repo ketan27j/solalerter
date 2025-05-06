@@ -173,43 +173,6 @@ router.post('/stop-subscription', async (req, res) => {
     }
 }); 
 
-router.get('/helius-response', async (req:any, res:any) => {
-    try {
-        const userDatabase = await prisma.userPostgresDatabase.findFirst({
-            where: {
-                userId: req.user.id
-            }
-        }); 
-        if(userDatabase) {
-            const pool = new Pool({
-                host: userDatabase.host,
-                port: userDatabase.port,
-                database: userDatabase.databaseName,
-                user: userDatabase.userName,
-                password: userDatabase.password,
-                ssl: {
-                    rejectUnauthorized: false
-                }
-            });
-            const client = await pool.connect();
-            try {
-                const query = `SELECT * FROM "HeliusResponse" order by "createdAt" desc`;
-                const response = await client.query(query);
-                res.status(200).json({
-                    success: true,
-                    events: response.rows
-                });
-            } finally {
-                client.release();
-                await pool.end();
-            }
-        }
-    } catch (error) {
-        console.error('Error fetching helius response:', error);
-        res.status(500).json({ error: 'Failed to fetch helius response' });
-    }
-}); 
-
 router.get('/get-webhook', async (req, res) => {
     try {
         const HELIUS_API_KEY: string = process.env.HELIUS_API_KEY || '';
