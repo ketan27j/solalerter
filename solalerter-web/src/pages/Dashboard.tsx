@@ -58,7 +58,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-semibold mb-4">Telegram Settings</h2>
+          <h2 className="text-lg font-semibold mb-4">Telegram Id</h2>
           <div className="text-sm text-gray-600">
             <p className={`font-semibold mt-2 ${telegramId ? 'text-green-600' : 'text-red-600'}`}>
               {telegramId ? telegramId : 'Please provide telegram id in profile'}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Siren, LayoutDashboard, Settings, History, Menu, X, LogOut } from 'lucide-react';
 
@@ -6,12 +6,21 @@ const Layout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState({});
 
   const isActive = (path: string) => location.pathname === path;
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  useEffect(() => {
+    const getUserInfo = async() => { 
+      setUserInfo(JSON.parse(localStorage.getItem('user_info') || '{}'));
+    }
+    getUserInfo();
+  },[] );
+  
 
   const handleLogout = () => {
     // Remove auth token from localStorage
@@ -89,14 +98,20 @@ const Layout: React.FC = () => {
       <nav className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
+            {/* Logo on the left */}
             <div className="flex items-center">
               <Link to="/" className="flex items-center px-2 py-2">
                 <Siren className="h-8 w-8 text-indigo-600" />
                 <span className="ml-1 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-700 bg-clip-text text-transparent">Sol Alerter</span>
               </Link>
+            </div>
+            
+            {/* Username on the right */}
+            <div className="flex items-center">
+              <span className="text-md text-gray-700">Welcome {userInfo.name ? userInfo.name.split(' ')[0].charAt(0).toUpperCase() + userInfo.name.split(' ')[0].slice(1).toLowerCase() : ''}</span>
               
               {/* Mobile Hamburger Menu */}
-              <div className="ml-auto absolute right-8 md:hidden">
+              <div className="ml-4 md:hidden">
                 <button 
                   onClick={toggleMobileMenu} 
                   className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
@@ -105,21 +120,9 @@ const Layout: React.FC = () => {
                 </button>
               </div>
             </div>
-            
-            {/* Desktop Logout Button */}
-            {/* <div className="hidden md:flex items-center">
-              <button
-                onClick={handleLogout}
-                className="ml-4 px-4 py-2 rounded-md text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-sm transition-all duration-200 flex items-center space-x-2 transform hover:scale-105"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Logout</span>
-              </button>
-            </div> */}
           </div>
         </div>
-      </nav>
-
+      </nav>     
       <div className="flex flex-col md:flex-row">
         {/* Desktop Sidebar */}
         <aside className="hidden md:block md:w-64 bg-white border-r border-gray-200 min-h-screen">
