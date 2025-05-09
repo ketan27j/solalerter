@@ -42,4 +42,30 @@ router.get("/get-user", async (req: any, res: any) => {
     }
 });
 
+router.post("/save-user", async (req: any, res: any) => {
+    try {
+        const user = await prisma.user.update({
+            where: {
+                id: req.user.id
+            },
+            data: {
+                name: req.body.userName,
+                telegramId: req.body.telegramId,
+            }
+        });
+        if(user) {
+            res.status(200).json({
+                success: true,
+                user: user
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Internal server error",
+            error: error
+        });
+    }
+});
+
 export default router;

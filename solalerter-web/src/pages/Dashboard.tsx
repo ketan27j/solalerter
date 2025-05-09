@@ -23,7 +23,6 @@ const Dashboard: React.FC = () => {
     fetchActiveSubscriptions();
   }, []);
 
-  // Check database connection status
   useEffect(() => {
     const getUserDetails = async () => {
       try {
