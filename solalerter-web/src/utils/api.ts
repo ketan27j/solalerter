@@ -5,7 +5,7 @@ if(env === 'development') {
   API_BASE_URL = import.meta.env.VITE_API_HOST;
 } 
 export const apiGet = async (endpoint: string, tokenNotReqd: boolean = false) => {
-    console.log('API GET Request:', `${API_BASE_URL}/${endpoint}`);
+    // console.log('API GET Request:', `${API_BASE_URL}/${endpoint}`);
     const token = localStorage.getItem('authToken');
     try {
       if (!token && !tokenNotReqd) {

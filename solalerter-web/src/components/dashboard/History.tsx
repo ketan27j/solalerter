@@ -21,7 +21,7 @@ const History = () => {
   const fetchData = async () => {
     try {
       const response = await apiGet(`api/subscription/helius-response`);
-      setData(response.events || []);
+      setData(response.heliusResponse || []);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error('Failed to fetch data');
@@ -135,7 +135,7 @@ const History = () => {
                 {row.getVisibleCells().map(cell => (
                   <td 
                     key={cell.id} 
-                    className="px-4 py-3 text-sm"
+                    className="px-1 py-3 text-sm"
                   >
                     {flexRender(
                       cell.column.columnDef.cell,

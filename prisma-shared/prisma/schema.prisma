@@ -33,11 +33,14 @@ model Subscription {
   user              User       @relation(fields: [userId], references: [id])
   addressType       AddressType @default(TOKEN)  
   transactionType   String?
+  name              String?   
   address           String?
   webhookId         String?
   webhookUrl        String?
   status            SubscriptionStatus @default(STOPPED)
+  twitterAlert      Boolean?
   TokenPrice        TokenPrice[]
+  HeliusResponse    HeliusResponse[]
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
 }
@@ -53,11 +56,13 @@ model TokenPrice {
 }
 
 model HeliusResponse {
-  id          Int     @id @default(autoincrement())
-  response    String
-  userId      Int
-  user        User    @relation(fields: [userId], references: [id])
-  createdAt   DateTime  @default(now())
+  id              Int     @id @default(autoincrement())
+  response        String
+  userId          Int
+  user            User    @relation(fields: [userId], references: [id])
+  subscriptionId  Int
+  Subscription    Subscription? @relation(fields: [subscriptionId], references: [id])  
+  createdAt       DateTime  @default(now())
 }
 
 enum SubscriptionStatus {

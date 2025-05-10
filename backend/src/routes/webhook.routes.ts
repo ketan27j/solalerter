@@ -1,7 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { PrismaClient } from 'prisma-shared';
-import { Pool } from 'pg';
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -14,22 +13,35 @@ router.post("/helius-webhook", async (req, res) => {
         if(!authHeader){
             return res.status(401).json({ error: 'Unauthorized' });
         }
-        let userId = 0;
+        let subscriptionId = 0;
         if(authHeader){
-            userId = Number(authHeader);
-            console.log('userId:', userId);
+            subscriptionId = Number(authHeader);
+            console.log('subscriptionId:', subscriptionId);
         }
 
         if (!request) {
             return res.status(400).json({ error: 'Invalid webhook payload' });
         }
+        //get user id from subscription id
+        const userId = await prisma.subscription.findUnique({
+            where: {
+                id: subscriptionId,
+            },
+            select: {
+                userId: true,
+            },
+        });
 
         const response = await prisma.heliusResponse.create({
             data: {
-                userId: userId,
+                userId: Number(userId),
+                subscriptionId: subscriptionId,
                 response: request,
             },
         });
+        if (!response) {
+            return res.status(500).json({ error: 'Failed to save response' });
+        }
         res.status(200).json({ message: 'Webhook received successfully' });
     } catch (error) {
         console.error('Error in /helius-webhook:', error);

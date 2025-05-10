@@ -5,8 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: '../backend/dist/clientApp', // Change this to your desired output directory
-    // outDir: '../dist/clientApp', // Change this to your desired output directory
+    // outDir: '../backend/dist/clientApp', // Change this to your desired output directory
+    outDir: '../dist/clientApp', // Change this to your desired output directory
     emptyOutDir: true, // Optional: Clean the directory before building
   },
   define: {

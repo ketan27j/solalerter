@@ -26,7 +26,6 @@ const AllSubscriptions = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const response = await axios.get(`${API_HOST}/api/subscription/all-subscriptions`);
         const response = await apiGet(`api/subscription/all-subscriptions`);
         setData(response.subscriptions);
       } catch (error) {
@@ -47,6 +46,13 @@ const AllSubscriptions = () => {
         mobileHidden: true 
       }
     }),
+    columnHelper.accessor('name', {
+      header: 'Name',
+      cell: info => info.getValue(),
+      meta: {
+        mobileHeader: true
+      }
+    }),
     columnHelper.accessor('transactionType', {
       header: 'Transaction Type',
       cell: info => info.getValue(),
@@ -63,6 +69,16 @@ const AllSubscriptions = () => {
       }),
     columnHelper.accessor('address', {
       header: 'Address',
+      cell: info => {
+        const address = info.getValue();
+        return address ? `${address.substring(0, 20)}...` : '';
+      },
+      meta: { 
+        mobileHidden: true 
+      }
+    }),
+    columnHelper.accessor('twitterAlert', {
+      header: 'Twitter Alert',
       cell: info => info.getValue(),
       meta: { 
         mobileHidden: true 
@@ -188,9 +204,11 @@ const AllSubscriptions = () => {
           </span>
         </div>
         <div className="space-y-2 text-sm text-gray-600 break-words">
+          <p><strong>Name:</strong> {row.name}</p>
           <p><strong>Address Type:</strong> {row.addressType}</p>
           <p><strong>Transaction Type:</strong> {row.transactionType}</p>
-          <p><strong>Address:</strong> {row.address}</p>
+          <p><strong>Twitter Alert:</strong> {row.twitterAlert}</p>
+          <p><strong>Address:</strong> {row.address ? `${row.address.substring(0, 20)}...` : ''}</p>
         </div>
         <div className="mt-4 flex justify-end space-x-2">
           <button 

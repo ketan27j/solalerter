@@ -13,14 +13,14 @@ console.log('webhookUrl:', webhookUrl);
 
 router.post("/new-subscription", async (req: any, res: any) => {
     try {
-        const { address, transactionType, addressType } = req.body;
-        console.log('address:', address);
-        console.log('transactionType:', transactionType);
+        const { name, address, transactionType, addressType, twitterAlert } = req.body;
         const response = await prisma.subscription.create({
             data: {
                 userId : req.user.id,
                 webhookUrl: webhookUrl,
                 address: address,
+                name:name,
+                twitterAlert:twitterAlert,
                 transactionType: transactionType,
                 addressType: addressType,
             },
@@ -109,7 +109,7 @@ router.post('/start-subscription', async (req: any, res: any) => {
         });
         if(subscription) {
             const webhookResponse = await helius.createWebhook({
-                authHeader: req.user.id.toString(),
+                authHeader: id.toString(),
                 webhookURL: subscription.webhookUrl || webhookUrl,
                 webhookType: WebhookType.ENHANCED_DEVNET,
                 transactionTypes: [subscription.transactionType as TransactionType],
@@ -212,7 +212,7 @@ router.post('/delete-webhook', async (req, res) => {
 
 router.get('/helius-response', async (req:any, res:any) => {
     try {
-        const heliusResponse = await prisma.heliusResponse.findFirst({
+        const heliusResponse = await prisma.heliusResponse.findMany({
             where: {
                 userId: req.user.id
             }

@@ -11,7 +11,9 @@ import { apiPost } from '../../utils/api';
 const NewSubscription = () => {
   const [, setCount] = useAtom(subscriptionsAtom); 
   const [activeTab, setActiveTab] = useState('TOKEN');
+  const [name, setName] = useState('');
   const [address, setAddress] = useState('');
+  const [twitterAlerts, setTwitterAlerts] = useState(false);
   const [transactionType, setTransactionType] = useState('TRANSFER');
 
   const tabs = [
@@ -22,9 +24,11 @@ const NewSubscription = () => {
   const createSubscription = async () => {
     try {
       const payload = {
+        name: name,
         address: address,
         transactionType : transactionType,
         addressType: activeTab,
+        twitterAlert: twitterAlerts,
       };
       const response = await apiPost('api/subscription/new-subscription', payload); 
 
@@ -79,34 +83,62 @@ const NewSubscription = () => {
       
       case 'TOKEN':
         return (
-          <div className="bg-white shadow-lg rounded-lg p-6">
+          <div className="bg-white shadow-lg rounded-lg p-2">
             <div className="grid md:grid-cols-1 gap-6">
               <div className="space-y-4">
-                <div className="p-4 min-w-xs mx-2">
-                  <div className="flex flex-wrap items-center gap-0 space-x-2 space-y-1 p-4">
-                    <label className="text-lg font-medium text-gray-700 break-words">
-                      Create a subscription for token address
+                <div className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="tokenName" className="block text-sm font-medium text-gray-700">
+                      Token Name
                     </label>
                     <input type="text" 
-                          value={address}
-                          onChange={(e) => setAddress(e.target.value)}
-                          className="w-25 border border-blue-200 rounded-lg py-2 px-3 text-gray-700 focus:ring-2 focus:ring-blue-300"
-                        />
-                    <label className="text-lg w-5 font-medium text-gray-700 whitespace-nowrap"> for </label>
-                    <select 
-                          value={transactionType}
-                          onChange={(e) => setTransactionType(e.target.value)}
-                          className="w-25 border border-blue-200 rounded-lg py-2 px-3 text-gray-700 focus:ring-2 focus:ring-blue-300">
-                      <option>TRANSFER</option>
-                      <option>STAKE_SOL</option>
-                      <option>UNSTAKE_SOL</option>
-                    </select>
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="w-[90%] border border-blue-200 rounded-lg py-2 px-2 text-gray-700 focus:ring-2 focus:ring-blue-300"
+                              />
+                    </div>
+                    <div>
+                      <label htmlFor="tokenAddress" className="block text-sm font-medium text-gray-700">
+                        Token Address
+                      </label>
+                      <input type="text" 
+                                  value={address}
+                                  onChange={(e) => setAddress(e.target.value)}
+                                  className="w-[90%] border border-blue-200 rounded-lg py-2 px-3 text-gray-700 focus:ring-2 focus:ring-blue-300"
+                                />
+                    </div>
+                    <div>
+                      <label htmlFor="tokenAddress" className="block text-sm font-medium text-gray-700">
+                        Transaction Type
+                      </label>
+                      <select 
+                            value={transactionType}
+                            onChange={(e) => setTransactionType(e.target.value)}
+                            className="w-[90%] border border-blue-200 rounded-lg py-2 px-3 text-gray-700 focus:ring-2 focus:ring-blue-300"                                                                                                                                                                                                                                                                 >
+                        <option>TRANSFER</option>
+                        <option>STAKE_SOL</option>
+                        <option>UNSTAKE_SOL</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="twitterAlerts" className="block text-sm font-medium text-gray-700">
+                        Twitter Alerts
+                      </label>
+                      <input type="checkbox" 
+                      checked={twitterAlerts}
+                      onChange={(e) => setTwitterAlerts(e.target.checked)}
+                      className="w-[90%] border border-blue-200 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-300 flex items-center justify-center m-3"
+                      />
+                    </div>
                   </div>
-                  <button 
-                        onClick={createSubscription}
-                        className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                    Set Subscription
-                  </button>
+                  <div className='p-4'>
+                    <button 
+                          onClick={createSubscription}
+                          className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                      Set Subscription
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

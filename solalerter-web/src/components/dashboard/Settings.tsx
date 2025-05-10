@@ -61,7 +61,7 @@ const Settings: React.FC = () => {
       <div className="bg-white shadow rounded-lg p-6">
         <h2 className="text-lg font-semibold mb-4">User Profile settings</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                 User Name
