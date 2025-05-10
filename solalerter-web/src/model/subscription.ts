@@ -11,6 +11,8 @@ export enum SubscriptionStatus {
 export type Subscription = {
   id: number;
   userId: number;
+  name: string;
+  twitterAlert: boolean;
   addressType: AddressType;
   transactionType: string | null;
   address: string | null;
