@@ -2,13 +2,12 @@ import express from 'express';
 import { Address, Helius, TransactionType, WebhookType } from 'helius-sdk';
 import { prisma, SubscriptionStatus } from 'prisma-shared';
 import dotenv from 'dotenv';
-import { Pool } from 'pg';
 
 dotenv.config();
 
 const router = express.Router();
 const HELIUS_API_KEY: string = process.env.HELIUS_API_KEY || '';
-const webhookUrl: string = process.env.WEBHOOK_URL || '';
+const webhookUrl: string = process.env.WEBHOOK_API_URL || '';
 const helius = new Helius(HELIUS_API_KEY)
 console.log('webhookUrl:', webhookUrl);
 
@@ -210,5 +209,26 @@ router.post('/delete-webhook', async (req, res) => {
         res.status(500).json({ error: 'Failed to delete webhook' });
     }
 });
+
+router.get('/helius-response', async (req:any, res:any) => {
+    try {
+        const heliusResponse = await prisma.heliusResponse.findFirst({
+            where: {
+                userId: req.user.id
+            }
+        }); 
+        if(heliusResponse) {
+            res.status(200).json({
+                success: true,
+                heliusResponse: heliusResponse
+            });
+        } else {
+            res.status(500).json({ error: 'Failed to fetch helius response' });
+        }
+    } catch (error) {
+        console.error('Error fetching helius response:', error);
+        res.status(500).json({ error: 'Failed to fetch helius response' });
+    }
+}); 
 
 export default router;

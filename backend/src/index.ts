@@ -34,6 +34,7 @@ import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
 import coinGeckoRoutes from './routes/coinGecko.routes';
 import telegramRoutes from './routes/telegram.routes';
+import webhookRoutes from './routes/webhook.routes';
 import { authenticateJWT } from "./middleware/auth.middleware";
 
 // Use routes
@@ -42,6 +43,7 @@ app.use('/api/user', authenticateJWT, userRoutes);
 app.use('/api/subscription', authenticateJWT, subscriptionRoutes);   
 app.use('/api/coingecko', coinGeckoRoutes);
 app.use('/api/telegram', telegramRoutes);
+app.use('/api/webhook', webhookRoutes);
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'clientApp', 'index.html'));
 });
