@@ -23,7 +23,7 @@ router.post("/helius-webhook", async (req, res) => {
             return res.status(400).json({ error: 'Invalid webhook payload' });
         }
         //get user id from subscription id
-        const userId = await prisma.subscription.findUnique({
+        const sub = await prisma.subscription.findUnique({
             where: {
                 id: subscriptionId,
             },
@@ -31,7 +31,7 @@ router.post("/helius-webhook", async (req, res) => {
                 userId: true,
             },
         });
-
+        const userId = sub?.userId;
         const response = await prisma.heliusResponse.create({
             data: {
                 userId: Number(userId),
