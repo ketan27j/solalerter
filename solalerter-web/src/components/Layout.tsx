@@ -6,7 +6,8 @@ const Layout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState({});
+
+  const [userInfo, setUserInfo] = useState<{ name?: string }>({});
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -145,6 +146,6 @@ const Layout: React.FC = () => {
       </div>
     </div>
   );
-};
 
+};
 export default Layout;
