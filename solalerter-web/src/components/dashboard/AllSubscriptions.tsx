@@ -79,7 +79,10 @@ const AllSubscriptions = () => {
     }),
     columnHelper.accessor('twitterAlert', {
       header: 'Twitter Alert',
-      cell: info => info.getValue(),
+      cell: info => { 
+        const twAlert = info.getValue();
+        return twAlert ? "Enabled" : "Disabled";
+      },
       meta: { 
         mobileHidden: true 
       }
@@ -207,7 +210,7 @@ const AllSubscriptions = () => {
           <p><strong>Name:</strong> {row.name}</p>
           <p><strong>Address Type:</strong> {row.addressType}</p>
           <p><strong>Transaction Type:</strong> {row.transactionType}</p>
-          <p><strong>Twitter Alert:</strong> {row.twitterAlert}</p>
+          <p><strong>Twitter Alert:</strong> {row.twitterAlert ? 'Enabled' : 'Disabled'}</p>
           <p><strong>Address:</strong> {row.address ? `${row.address.substring(0, 20)}...` : ''}</p>
         </div>
         <div className="mt-4 flex justify-end space-x-2">
