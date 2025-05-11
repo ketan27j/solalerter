@@ -39,19 +39,37 @@ const History = () => {
     }
   }, [refreshInterval]);
 
+  // Function to format blockchain addresses in description
+  const formatAddressesInDescription = (description: string): string => {
+    const addressRegex = /\b[1-9A-HJ-NP-Za-km-z]{32,44}\b/g;
+    
+    return description.replace(addressRegex, (address) => {
+      if (address.length > 10) {
+        return `${address.substring(0, 4)}...${address.substring(address.length - 4)}`;
+      }
+      return address; 
+    });
+  };
+
   // Column definition
   const columnHelper = createColumnHelper<any>();
   const columns = [
-    columnHelper.accessor('id', {
-      header: 'ID',
-      cell: info => info.getValue(),
-    }),
     columnHelper.accessor('response', {
-      header: 'Response',
+      header: 'Response Description',
       cell: info => {
         const value = info.getValue();
-        return value.length > 100 ? `${value.substring(0, 100)}...` : value;
+        try {
+          const parsedResponse = JSON.parse(value);
+          const description = parsedResponse[0].description || 'No description available';
+          return description.length > 100 ? `${formatAddressesInDescription(description)}` : description;
+        } catch (error) {
+          return 'Invalid JSON response';
+        }
       },
+    }),
+    columnHelper.accessor('subscriptionId', {
+      header: 'Subscription Id',
+      cell: info => info.getValue(),
     }),
     columnHelper.accessor('createdAt', {
       header: 'Created At',
@@ -70,14 +88,22 @@ const History = () => {
 
   // Mobile card view for each row
   const MobileRowCard = ({ row }: { row: any }) => {
+    let description = 'Invalid JSON response';
+    try {
+      const parsedResponse = JSON.parse(row.response);
+      description = parsedResponse[0].description || 'No description available';
+      if (description.length > 50) {
+        description = `${formatAddressesInDescription(description)}`;
+      }
+    } catch (error) {}
     return (
       <div className="bg-white shadow rounded-lg p-4 mb-4">
         <div className="flex justify-between items-center mb-2">
-          <h3 className="text-lg font-semibold">{row.id}</h3>
-          <span className="text-sm text-gray-600">{new Date(row.createdAt).toLocaleString()}</span>
+          <span className="text-md">Subscription Id: {row.subscriptionId}</span>
+          <span id='lblCreatedAt' className="text-sm text-gray-600">{new Date(row.createdAt).toLocaleString()}</span>
         </div>
         <div className="space-y-2 text-sm text-gray-600 break-words">
-          <p><strong>Response:</strong> {row.response.length > 50 ? `${row.response.substring(0, 50)}...` : row.response}</p>
+          <p><strong>Response Description:</strong> {description}</p>
         </div>
       </div>
     );
@@ -115,7 +141,7 @@ const History = () => {
                 {headerGroup.headers.map(header => (
                   <th 
                     key={header.id} 
-                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     {flexRender(
                       header.column.columnDef.header,
@@ -135,8 +161,7 @@ const History = () => {
                 {row.getVisibleCells().map(cell => (
                   <td 
                     key={cell.id} 
-                    className="px-1 py-3 text-sm"
-                  >
+                    className="px-2 py-3 text-sm text-left"                  >
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext()

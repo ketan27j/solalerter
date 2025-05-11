@@ -22,7 +22,8 @@ model User {
   name                String?
   telegramId          String?        @unique
   subscription        Subscription[]
-  HeliusResponse     HeliusResponse[]
+  HeliusResponse      HeliusResponse[]
+  Tweet               Tweet[]
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
 }
@@ -41,6 +42,7 @@ model Subscription {
   twitterAlert      Boolean?
   TokenPrice        TokenPrice[]
   HeliusResponse    HeliusResponse[]
+  Tweet             Tweet[]
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
 }
@@ -63,6 +65,30 @@ model HeliusResponse {
   subscriptionId  Int
   Subscription    Subscription? @relation(fields: [subscriptionId], references: [id])  
   createdAt       DateTime  @default(now())
+}
+
+model Tweet {
+  id              Int      @id @default(autoincrement())
+  tweet_id        BigInt   @unique
+  type            String
+  screen_name     String
+  bookmarks       Int
+  favorites       Int
+  created_at      DateTime
+  text            String
+  lang            String
+  quotes          Int
+  replies         Int
+  retweets        Int
+  keyword         String   @default("")
+  userId          Int      
+  user            User     @relation(fields: [userId], references: [id])
+  isAnalyzed      Boolean  @default(false)
+  isPresale       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  subscriptionId  Int?
+  Subscription    Subscription? @relation(fields: [subscriptionId], references: [id])  
 }
 
 enum SubscriptionStatus {

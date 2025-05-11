@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/genai": "^0.13.0",
     "@types/cors": "^2.8.17",
     "@types/dotenv": "^8.2.3",
     "@types/express": "^4.17.21",
@@ -23,9 +24,9 @@
     "dotenv": "^16.4.7",
     "express": "^4.19.2",
     "google-auth-library": "^9.15.1",
-    "jsonwebtoken": "^9.0.2",
     "helius-sdk": "^1.4.2",
-    "prisma-shared": "file:../prisma-shared"  
+    "jsonwebtoken": "^9.0.2",
+    "prisma-shared": "file:../prisma-shared"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.9",

@@ -215,6 +215,15 @@ router.get('/helius-response', async (req:any, res:any) => {
         const heliusResponse = await prisma.heliusResponse.findMany({
             where: {
                 userId: req.user.id
+            },
+            select: {
+                id: true,
+                response: true,
+                subscriptionId: true,
+                createdAt: true,
+            }, 
+            orderBy: {
+                createdAt: 'desc'
             }
         }); 
         if(heliusResponse) {
@@ -230,5 +239,26 @@ router.get('/helius-response', async (req:any, res:any) => {
         res.status(500).json({ error: 'Failed to fetch helius response' });
     }
 }); 
+
+router.get('/helius-data-points', async (req:any, res:any) => {
+    try {
+        const heliusDataPoints = await prisma.heliusResponse.count({
+            where: {
+                userId: req.user.id
+            }
+        });
+        if(heliusDataPoints) {
+            res.status(200).json({
+                success: true,
+                heliusDataPoints: heliusDataPoints
+            });
+        } else {
+            res.status(500).json({ error: 'Failed to fetch helius data points' });
+        }
+    } catch (error) {
+        console.error('Error fetching helius data points:', error);
+        res.status(500).json({ error: 'Failed to fetch helius data points' });
+    }
+});
 
 export default router;

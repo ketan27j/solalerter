@@ -24,6 +24,20 @@ const Dashboard: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const fetchDatapoints = async () => {
+      try {
+        const response = await apiGet('api/subscription/helius-data-points');
+        if (response.success) {
+          setindexCount(response.heliusDataPoints);
+        }
+      } catch (error) {
+        console.error('Error fetching data points:', error);
+        };
+    };
+    fetchDatapoints();
+  }, []);
+
+  useEffect(() => {
     const getUserDetails = async () => {
       try {
         const response = await apiGet('api/user/get-user');
@@ -62,6 +76,15 @@ const Dashboard: React.FC = () => {
             <p className={`font-semibold mt-2 ${telegramId ? 'text-green-600' : 'text-red-600'}`}>
               {telegramId ? telegramId : 'Please provide telegram id in profile'}
             </p>
+            <div className="mt-3">
+              <a 
+                href="https://web.telegram.org/a/#7621995122" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  <span>Send your Telegram Id here to start alerts</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
