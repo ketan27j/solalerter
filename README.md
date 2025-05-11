@@ -6,7 +6,7 @@ SolAlerter is a blockchain alerting platform that enables users to seamlessly se
 ![SolIndexer Architecture](https://github.com/ketan27j/solalerter/blob/main/docs/architecture.png)
 
 ## Demo
-[![Video Description](https://github.com/ketan27j/solalerter/blob/main/docs/play.jpg)](https://youtu.be/0kg__b4kwV8)
+[![Video Description](https://github.com/ketan27j/solalerter/blob/main/docs/play.jpg)](https://youtu.be/ZY6d54olTDo)
 
 ## Features
 
