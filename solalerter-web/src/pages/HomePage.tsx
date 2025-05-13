@@ -70,7 +70,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const fetchTrendingCoins = async () => {
-      const data = await apiGet('api/coingecko/get-trending-coins',true);
+      const data = [];//await apiGet('api/coingecko/get-trending-coins',true);
       setTrendingCoins(data);
     };
 
@@ -252,10 +252,11 @@ export default function HomePage() {
                 Monitor your favorite Solana coins, track ICOs, receive real-time alerts for whale movements, and stay updated with market news directly on Telegram.
               </p>
               <div className="mt-10 flex flex-wrap justify-center lg:justify-start gap-4">
-                <button className="px-6 py-3 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium transition flex items-center">
+                <button  onClick={toggleLogin} className="px-6 py-3 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium transition flex items-center">
                   Get Started <ArrowRight className="ml-2" size={20} />
                 </button>
-                <button className="px-6 py-3 rounded-md border border-gray-300 hover:border-gray-400 font-medium transition">
+
+                <button className="px-6 py-3 rounded-md border border-gray-300 hover:border-gray-400 font-medium transition" onClick={() => window.open('https://youtu.be/IAWVHhFShbo', '_blank')}>
                   View Demo
                 </button>
               </div>
@@ -423,7 +424,10 @@ export default function HomePage() {
                 <Coins className="text-purple-500" size={18} />
                 <h2 className="font-semibold text-sm sm:text-base">Top Coins by Market Cap</h2>
               </div>
-              <button 
+              <span className="text-right text-xs">Source:&nbsp;
+                  <a href="https://www.coingecko.com" target="_blank" rel="noopener noreferrer">CoinGecko</a>
+                </span>              
+                <button 
                 onClick={() => setShowTopCoins(!showTopCoins)}
                 className="p-1 rounded-md hover:bg-opacity-10 hover:bg-gray-500"
               >

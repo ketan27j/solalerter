@@ -30,7 +30,7 @@ const Layout: React.FC = () => {
     
     // Redirect to login page
     // navigate('/login');
-    window.location.href = '/login';
+    window.location.href = '/';
   };
 
   const renderSidebarLinks = () => (

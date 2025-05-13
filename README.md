@@ -161,4 +161,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - [Helius](https://helius.dev) for providing the webhook infrastructure
 - [Solana](https://solana.com) for the blockchain platform
+- [CoinGecko](https://www.coingecko.com) for token and NFT data
 - All contributors and supporters of this project
