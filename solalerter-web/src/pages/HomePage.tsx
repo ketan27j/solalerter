@@ -70,14 +70,11 @@ export default function HomePage() {
 
   useEffect(() => {
     const fetchTrendingCoins = async () => {
-      const data = [];//await apiGet('api/coingecko/get-trending-coins',true);
+      const data = await apiGet('api/coingecko/get-trending-coins',true);
       setTrendingCoins(data);
     };
 
     fetchTrendingCoins();
-    const interval = setInterval(fetchTrendingCoins, 600000); // 10 minutes
-
-    return () => clearInterval(interval);
   }, []);
 
   const toggleLogin = () => {

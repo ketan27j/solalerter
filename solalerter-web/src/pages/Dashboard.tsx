@@ -64,9 +64,6 @@ const Dashboard: React.FC = () => {
     };
 
     fetchTrendingCoins();
-    const interval = setInterval(fetchTrendingCoins, 600000); // 10 minutes
-
-    return () => clearInterval(interval);
   }, []);
 
   return (
