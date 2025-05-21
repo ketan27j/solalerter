@@ -59,7 +59,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const fetchTrendingCoins = async () => {
-      const data = await apiGet('api/coingecko/get-trending-coins',true);
+      const data =[];// await apiGet('api/coingecko/get-trending-coins',true);
       setTrendingCoins(data);
     };
 
